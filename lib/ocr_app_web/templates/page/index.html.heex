@@ -1,0 +1,359 @@
+<div class="ocr-app-container">
+  <h2>이미지 OCR 변환</h2>
+  <p>이미지를 업로드하여 텍스트를 추출합니다.</p>
+  
+  <div class="ocr-form">
+    <form id="ocr-form" enctype="multipart/form-data">
+      <div class="file-upload-container">
+        <input type="file" id="image-upload" name="image" accept="image/*" />
+        <label for="image-upload" class="file-upload-button">
+          이미지 파일 선택
+        </label>
+        <span id="file-name">파일이 선택되지 않았습니다</span>
+      </div>
+      
+      <div class="options-container">
+        <div class="option">
+          <input type="checkbox" id="detect-language" name="detect_language" />
+          <label for="detect-language">언어 자동 감지</label>
+        </div>
+        
+        <div class="option">
+          <label for="language-select">언어 선택:</label>
+          <select id="language-select" name="language">
+            <option value="kor">한국어</option>
+            <option value="eng">영어</option>
+            <option value="jpn">일본어</option>
+            <option value="chn">중국어 간체</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="advanced-options">
+        <details>
+          <summary>고급 옵션</summary>
+          <div class="advanced-options-content">
+            <div class="option">
+              <label for="psm-select">페이지 분할 모드 (PSM):</label>
+              <select id="psm-select" name="psm">
+                <option value="3" selected>자동 페이지 분할 (기본값)</option>
+                <option value="6">단일 텍스트 블록</option>
+                <option value="4">단일 열의 가변 크기 텍스트</option>
+                <option value="5">단일 세로 문자열</option>
+                <option value="7">단일 텍스트 라인</option>
+                <option value="8">단일 단어</option>
+                <option value="9">단일 단어 (원형)</option>
+                <option value="10">단일 문자</option>
+                <option value="11">드문드문 텍스트</option>
+                <option value="12">드문드문 텍스트 + OSD</option>
+                <option value="13">원시 라인</option>
+              </select>
+            </div>
+            <div class="psm-help">
+              <p><strong>PSM 모드 도움말:</strong></p>
+              <ul>
+                <li><strong>자동 페이지 분할 (3)</strong>: 여러 문단과 레이아웃이 있는 문서에 적합</li>
+                <li><strong>단일 텍스트 블록 (6)</strong>: 문단 같은 일반 텍스트에 적합</li>
+                <li><strong>단일 라인 (7)</strong>: 한 줄의 텍스트만 있는 경우</li>
+                <li><strong>단일 단어 (8)</strong>: 단어 하나만 있는 경우</li>
+                <li><strong>드문드문 텍스트 (11)</strong>: 표나 격자 형태의 텍스트</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+      </div>
+      
+      <button type="submit" class="process-button">이미지 처리하기</button>
+    </form>
+  </div>
+  
+  <div class="results-container">
+    <h3>추출된 텍스트</h3>
+    <div class="results-box">
+      <pre id="ocr-results">이미지를 업로드하면 여기에 결과가 표시됩니다.</pre>
+    </div>
+    <button id="copy-button" class="copy-button">클립보드에 복사</button>
+    <button id="save-button" class="save-button">텍스트 파일로 저장</button>
+  </div>
+  
+</div>
+
+<style>
+  .ocr-app-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  h2 {
+    color: #0078d7;
+    margin-bottom: 10px;
+  }
+  
+  .ocr-form {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .file-upload-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  #image-upload {
+    display: none;
+  }
+  
+  .file-upload-button {
+    background-color: #0078d7;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .file-upload-button:hover {
+    background-color: #006cc1;
+  }
+  
+  #file-name {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .options-container {
+    margin: 15px 0;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  select {
+    padding: 6px;
+    border-radius: 2px;
+    border: 1px solid #ddd;
+  }
+  
+  .process-button {
+    background-color: #107c10;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  .process-button:hover {
+    background-color: #0c5e0c;
+  }
+  
+  .results-container {
+    margin-top: 30px;
+  }
+  
+  .results-box {
+    min-height: 150px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  #ocr-results {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  
+  .copy-button, .save-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    margin-right: 10px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  
+  .copy-button:hover, .save-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .advanced-options {
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .advanced-options summary {
+    padding: 10px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .advanced-options-content {
+    padding: 15px;
+    background-color: #fff;
+  }
+  
+  .psm-help {
+    margin-top: 10px;
+    font-size: 12px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .psm-help ul {
+    margin: 5px 0 0 15px;
+    padding: 0;
+  }
+  
+  .psm-help li {
+    margin-bottom: 5px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('image-upload');
+    const fileNameDisplay = document.getElementById('file-name');
+    const languageDetectCheckbox = document.getElementById('detect-language');
+    const languageSelect = document.getElementById('language-select');
+    const psmSelect = document.getElementById('psm-select');
+    const copyButton = document.getElementById('copy-button');
+    const saveButton = document.getElementById('save-button');
+    const ocrForm = document.getElementById('ocr-form');
+    const ocrResults = document.getElementById('ocr-results');
+    
+    // 파일 선택 시 파일명 표시
+    fileInput.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        fileNameDisplay.textContent = this.files[0].name;
+      } else {
+        fileNameDisplay.textContent = '파일이 선택되지 않았습니다';
+      }
+    });
+    
+    // 언어 자동 감지 체크박스 이벤트
+    languageDetectCheckbox.addEventListener('change', function() {
+      languageSelect.disabled = this.checked;
+    });
+    
+    // 폼 제출 이벤트
+    ocrForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('이미지 파일을 선택해주세요.');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+      formData.append('language', languageSelect.value);
+      formData.append('detect_language', languageDetectCheckbox.checked);
+      formData.append('psm', psmSelect.value);
+      
+      // 처리 중 UI 표시
+      ocrResults.textContent = "처리 중입니다...";
+      const submitButton = this.querySelector('.process-button');
+      submitButton.disabled = true;
+      submitButton.textContent = '처리 중...';
+      
+      console.log('API 요청 시작', {
+        url: '/api/ocr/upload',
+        file: fileInput.files[0].name,
+        language: languageSelect.value,
+        detect_language: languageDetectCheckbox.checked,
+        psm: psmSelect.value
+      });
+      
+      fetch('/api/ocr/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        console.log('API 응답 상태:', response.status, response.statusText);
+        console.log('응답 헤더:', response.headers);
+        
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('응답 에러:', text);
+            throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+          });
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        } else {
+          return response.text().then(text => {
+            console.error('JSON이 아닌 응답:', text);
+            throw new Error('서버가 JSON 형식이 아닌 응답을 반환했습니다.');
+          });
+        }
+      })
+      .then(data => {
+        console.log('API 응답 데이터:', data);
+        submitButton.disabled = false;
+        submitButton.textContent = '이미지 처리하기';
+        
+        if (data.success) {
+          ocrResults.textContent = data.text;
+        } else {
+          ocrResults.textContent = "오류가 발생했습니다: " + (data.error || "알 수 없는 오류");
+        }
+      })
+      .catch(error => {
+        console.error('API 요청 오류:', error);
+        submitButton.disabled = false;
+        submitButton.textContent = '이미지 처리하기';
+        ocrResults.textContent = "오류가 발생했습니다: " + error.message;
+      });
+    });
+    
+    // 복사 버튼 클릭 이벤트
+    copyButton.addEventListener('click', function() {
+      const resultText = document.getElementById('ocr-results').textContent;
+      navigator.clipboard.writeText(resultText)
+        .then(() => {
+          alert('텍스트가 클립보드에 복사되었습니다.');
+        })
+        .catch(err => {
+          console.error('클립보드 복사 실패:', err);
+        });
+    });
+    
+    // 저장 버튼 클릭 이벤트
+    saveButton.addEventListener('click', function() {
+      const resultText = document.getElementById('ocr-results').textContent;
+      const blob = new Blob([resultText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ocr-results.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  });
+</script>

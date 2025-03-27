@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content={csrf_token_value()}>
+    <%= live_title_tag assigns[:page_title] || "OCR 앱", suffix: " · Window App" %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+      .window-app {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .window-title-bar {
+        background-color: #0078d7;
+        color: white;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+      }
+      .window-title-bar h1 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: normal;
+      }
+      .window-content {
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="window-app">
+      <div class="window-title-bar">
+        <h1>OCR 앱</h1>
+      </div>
+      <div class="window-content">
+        <%= @inner_content %>
+      </div>
+    </div>
+  </body>
+</html>
